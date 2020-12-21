@@ -1,0 +1,23 @@
+select 
+emp_no,
+title,
+concat(em.first_name,' ',em.last_name) as fio,
+sum(case when year (sl.from_date) ='2000' and  year (sl.to_date) ='2001' then salary else 0 end) as '00-01',
+min(case when year (tl.from_date)<='2000' and year (tl.to_date)>='2001' and tl.title='Staff' then 'Staff' 
+	     when year (tl.from_date)<='2000' and year (tl.to_date)>='2001' and tl.title='Senior Engineer' then 'Senior Engineer'
+         when year (tl.from_date)<='2000' and year (tl.to_date)>='2001' and tl.title='Engineer' then 'Engineer'
+         when year (tl.from_date)<='2000' and year (tl.to_date)>='2001' and tl.title='Senior Staff' then 'Senior Staff'
+         when year (tl.from_date)<='2000' and year (tl.to_date)>='2001' and tl.title='Assistant Engineer' then 'Assistant Engineer'
+         when year (tl.from_date)<='2000' and year (tl.to_date)>='2001' and tl.title='Technique Lided' then 'Technique Lided'
+         when year (tl.from_date)<='2000' and year (tl.to_date)>='2001' and tl.title='Manager' then 'Manager'
+         else ''
+ end) as prof_00_01
+
+from salaries sl
+left join employees em using(emp_no)
+left join titles tl using(emp_no)
+where tl.to_date='9999-01-01' ##and title='Senior Engineer'
+and (year (sl.from_date) ='2000' and  year (sl.to_date) ='2001')
+group by 
+emp_no, title, concat(em.first_name,' ',em.last_name)
+limit 10;
